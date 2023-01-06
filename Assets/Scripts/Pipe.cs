@@ -9,7 +9,6 @@ public class Pipe : MonoBehaviour
     {
         RandomGeneratePosition();
         aSource = this.GetComponent<AudioSource>();
-
     }
 
 
@@ -29,8 +28,7 @@ public class Pipe : MonoBehaviour
             aSource.Play();
             GameManager._intance.score++;
 
-            //Debug.Log("---------"+ GameManager._intance.score);
-            EventDispatcher.Instance.FireEvent(EventNullType.EVENT_SCORE, new EventNull { intValue = GameManager._intance.score });//发布事件，并传送值
+            EventCenter.GetInstance().Fire(EventName.EN_updateScore);
         }
     }
 

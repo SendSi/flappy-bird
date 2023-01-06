@@ -56,12 +56,13 @@
     <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\GameMenu.cs" />
+    <Compile Include="Assets\Scripts\BaseSingle.cs" />
     <Compile Include="Assets\Scripts\Bird.cs" />
-    <Compile Include="Assets\Scripts\EventDispatcher.cs" />
-    <Compile Include="Assets\Scripts\EventDispatcherGeneric.cs" />
+    <Compile Include="Assets\Scripts\EventAction.cs" />
+    <Compile Include="Assets\Scripts\EventCenter.cs" />
     <Compile Include="Assets\Scripts\FollowBird.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
+    <Compile Include="Assets\Scripts\GameMenu.cs" />
     <Compile Include="Assets\Scripts\MoveTrigger.cs" />
     <Compile Include="Assets\Scripts\Pipe.cs" />
     <Compile Include="Assets\Scripts\PipeUpOrDown.cs" />
