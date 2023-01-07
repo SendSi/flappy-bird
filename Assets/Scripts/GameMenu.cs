@@ -4,46 +4,43 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using WeChatWASM;
 using System.Collections.Generic;
+using System;
 
 public class GameMenu : MonoBehaviour
 {
-
-    public static GameMenu _instance;
-    public Text nowScore;
-    public Text highScore;
-    public Text playScore;
+    public Text countNowTxt;//当前玩的结果
+    public Text countHistoryTxt;//历史
+    public Text curScoreTxt;//当前显示分数
     public Button startBtn;
-    public Image bgTexture;
-
+    public Image gameOverImage;
 
     public Button ShareButton;
 
     //public Button ShowButton;
     //public Button ReportButton;
-
     //public RawImage RankBody;
     //public GameObject RankMask;
     //public GameObject RankingBox;
 
     public void SetUIShow(bool isShow)
     {
-        nowScore.gameObject.SetActive(isShow);
-        highScore.gameObject.SetActive(isShow);
-        bgTexture.gameObject.SetActive(isShow);
+        countNowTxt.gameObject.SetActive(isShow);
+        countHistoryTxt.gameObject.SetActive(isShow);
+        gameOverImage.gameObject.SetActive(isShow);
         startBtn.gameObject.SetActive(isShow);
         ShareButton.gameObject.SetActive(isShow);
-
     }
 
     void Awake()
     {
-        _instance = this;
         SetUIShow(false);
-
     }
+
+
     private void Start()
     {
-        EventCenter.GetInstance().Bind(EventName.EN_updateScore, ScoreTextUpdate);
+        EventCenter.GetInstance().Bind(EventName.EN_updateScore, OnEventScoreRefresh);
+        EventCenter.GetInstance().Bind(EventName.EN_gameOver, OnEventGameOver);
 
         startBtn.onClick.AddListener(() =>
         {
@@ -94,6 +91,24 @@ public class GameMenu : MonoBehaviour
 
     }
 
+    private void OnEventGameOver()
+    {
+        SetUIShow(true);
+        UpdateScore(GameManager._intance.score);
+        UploadPlayerScore(GameManager._intance.score);
+    }
+
+    void UploadPlayerScore(int score)
+    {
+        OpenDataMessage msgData = new OpenDataMessage();
+        msgData.type = "setUserRecord";
+        msgData.score =score;
+
+        string msg = JsonUtility.ToJson(msgData);
+        Debug.LogError(msg);
+        WX.GetOpenDataContext().PostMessage(msg);
+    }
+
     void Init()
     {
 
@@ -126,27 +141,14 @@ public class GameMenu : MonoBehaviour
                 imageUrl = "https://mmgame.qpic.cn/image/5f9144af9f0e32d50fb878e5256d669fa1ae6fdec77550849bfee137be995d18/0",
             });
         });
-
-        //ReportButton.onClick.AddListener(() =>
-        //{
-        //    OpenDataMessage msgData = new OpenDataMessage();
-        //    msgData.type = "setUserRecord";
-        //    msgData.score = GameManager._intance.score;
-
-
-        //    string msg = JsonUtility.ToJson(msgData);
-
-        //    Debug.Log(msg);
-        //    WX.GetOpenDataContext().PostMessage(msg);
-        //});
     }
 
 
 
 
-    private void ScoreTextUpdate()
-    {    
-        playScore.text = "当前:" + GameManager._intance.score.ToString();//接受值
+    private void OnEventScoreRefresh()
+    {
+        curScoreTxt.text = "当前:" + GameManager._intance.score.ToString();//接受值
     }
 
     public void UpdateScore(float nowScore)
@@ -160,13 +162,14 @@ public class GameMenu : MonoBehaviour
 
         PlayerPrefs.SetFloat("score", highScore);
 
-        this.nowScore.text ="当前:"+ nowScore.ToString();
-        this.highScore.text = "历史最高:" + highScore.ToString();
+        this.countNowTxt.text = "当前:" + nowScore.ToString();
+        this.countHistoryTxt.text = "历史最高:" + highScore.ToString();
     }
 
     private void OnDestroy()
-    {     
-        EventCenter.GetInstance().UnBind(EventName.EN_updateScore, ScoreTextUpdate);
+    {
+        EventCenter.GetInstance().UnBind(EventName.EN_updateScore, OnEventScoreRefresh);
+        EventCenter.GetInstance().UnBind(EventName.EN_gameOver, OnEventGameOver);
     }
 
 
@@ -197,13 +200,13 @@ public class GameMenu : MonoBehaviour
 }
 
 
-[System.Serializable]
-public class OpenDataMessage
-{
-    // type 用于表明时间类型
-    public string type;
+//[System.Serializable]
+//public class OpenDataMessage
+//{
+//    // type 用于表明时间类型
+//    public string type;
 
-    public string shareTicket;
+//    public string shareTicket;
 
-    public int score;
-}
+//    public int score;
+//}

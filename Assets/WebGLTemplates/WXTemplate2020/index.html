@@ -188,9 +188,7 @@
             return Math.random().toString(32);
         },
         WXReportGameStart:function(){},
-        WXSetGameStage: function() {},
-        WXReportGameStageCostTime: function(costTime, extJsonStr) {},
-        WXReportGameStageError: function(errorType, errStr, extJsonStr) {},
+        WXReportGameSceneError: function(sceneId, errorType, errStr, extJsonStr) {},
         WXWriteLog: function(str) {},
         WXWriteWarn: function(str) {},
         WXHideLoadingPage: function() {},
@@ -284,6 +282,9 @@
         WXUncaughtException(){},
         WXSetDataCDN() {},
         WXSetPreloadList() {},
+        WXReportScene() {},
+        WXGetCachePath() {},
+        WXGetPluginCachePath() {},
             WX_AddCard(conf, callbackId){
     },
     WX_AuthPrivateMessage(conf, callbackId){

@@ -40,7 +40,7 @@ function formatTouchEvent(v) {
   };
 }
 
-function formatResponse(type, data) {
+export function formatResponse(type, data) {
   const conf = ResType[type];
   const typeMap = { array: [], string: '', int: 0, bool: false, object: {} };
   if (!conf) {

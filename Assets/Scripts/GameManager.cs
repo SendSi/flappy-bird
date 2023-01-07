@@ -30,17 +30,15 @@ public class GameManager : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 // transform state
-                GameState = GAMESTATE_PLAYING;
-                // set bird is playing 
-                // 1.set gravity 2.add velocity of x
-                bird.SendMessage("getLife");
+                GameState = GAMESTATE_PLAYING;        
+
+                EventCenter.GetInstance().Fire(EventName.EN_getLife);
             }
         }
 
         if (GameState == GameManager.GAMESTATE_END)
         {
-            GameMenu._instance.SetUIShow(true);
-            GameMenu._instance.UpdateScore(score);
+            EventCenter.GetInstance().Fire(EventName.EN_gameOver);
         }
     }
 }

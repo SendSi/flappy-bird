@@ -11,13 +11,10 @@ public class Pipe : MonoBehaviour
         aSource = this.GetComponent<AudioSource>();
     }
 
-
     public void RandomGeneratePosition()
     {
-        // how to random a number
         float pos_y = Random.Range(-0.4f, -0.1f);
         this.transform.localPosition = new Vector3(this.transform.localPosition.x, pos_y, this.transform.localPosition.z);
-
     }
 
     void OnTriggerExit(Collider other)
@@ -27,7 +24,6 @@ public class Pipe : MonoBehaviour
             // plus scroe
             aSource.Play();
             GameManager._intance.score++;
-
             EventCenter.GetInstance().Fire(EventName.EN_updateScore);
         }
     }

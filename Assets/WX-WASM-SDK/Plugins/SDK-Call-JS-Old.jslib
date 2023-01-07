@@ -361,9 +361,15 @@ mergeInto(LibraryManager.library, {
                             console.error(res);
                         }
                     })
+                    var errorCount = 0;
                     for (var i = 0; i < 100000 && i < calls.length; ++i) {
                         var callstack = calls[i];
                         var item = allocation_used[callstack];
+                        if (typeof item === "undefined") {
+                            // console.error('callstack not fond', callstack);
+                            ++errorCount;
+                            continue
+                        }
                         var posOfThisFunc = callstack.indexOf('emscripten_trace_record_') + "emscripten_trace_record_".length;
                         if (posOfThisFunc != -1) callstack = callstack.substr(posOfThisFunc);
                         var posOfRaf = callstack.lastIndexOf("InitWebGLPlayeriPPc ");
@@ -384,7 +390,7 @@ mergeInto(LibraryManager.library, {
                             }
                         })
                     }
-                    console.log('WXDumpUnityHeap end')
+                    console.log("WXDumpUnityHeap end", errorCount)
                 }
             })
         }
@@ -564,14 +570,8 @@ mergeInto(LibraryManager.library, {
     WXReportGameStart: function () {
         window.WXWASMSDK.WXReportGameStart();
     },
-    WXSetGameStage: function(stageType) {
-        window.WXWASMSDK.WXSetGameStage(stageType);
-    },
-    WXReportGameStageCostTime: function(totalMs, extJsonStr) {
-        window.WXWASMSDK.WXReportGameStageCostTime(totalMs, _WXPointer_stringify_adaptor(extJsonStr));
-    },
-    WXReportGameStageError: function(errorType, errStr, extJsonStr) {
-        window.WXWASMSDK.WXReportGameStageError(errorType, _WXPointer_stringify_adaptor(errStr), _WXPointer_stringify_adaptor(extJsonStr));
+    WXReportGameSceneError: function(sceneId, errorType, errStr, extJsonStr) {
+        window.WXWASMSDK.WXReportGameSceneError(sceneId, errorType, _WXPointer_stringify_adaptor(errStr), _WXPointer_stringify_adaptor(extJsonStr));
     },
     WXWriteLog: function (str) {
         window.WXWASMSDK.WXWriteLog(_WXPointer_stringify_adaptor(str))
@@ -858,6 +858,17 @@ mergeInto(LibraryManager.library, {
         return HEAP8.length - heap_end
         return 0
     },
+    WXProfilingMemoryDump: function() {
+        if (typeof emscriptenMemoryProfiler !== "undefined")  {
+            GameGlobal.memprofiler.onDump();
+            wx.showModal({
+                title: 'ProfilingMemory',
+                content: 'OnDump Complete!'
+            });
+            return;
+        }
+        console.error('Please call WX.InitSDK & Select ProfilingMemory Option')  
+    },
     WXLogManagerDebug:function(str){
         window.WXWASMSDK.WXLogManagerDebug(
             _WXPointer_stringify_adaptor(str)
@@ -902,12 +913,29 @@ mergeInto(LibraryManager.library, {
         stringToUTF8(returnStr, buffer, bufferSize);
         return buffer;
     },
+    WXGetCachePath: function(url) {
+        var returnStr = window.WXWASMSDK.WXGetCachePath(_WXPointer_stringify_adaptor(url));
+        var bufferSize = lengthBytesUTF8(returnStr) + 1;
+        var buffer = _malloc(bufferSize);
+        stringToUTF8(returnStr, buffer, bufferSize);
+        return buffer;
+    },
+    WXGetPluginCachePath: function() {
+        var returnStr = window.WXWASMSDK.WXGetPluginCachePath();
+        var bufferSize = lengthBytesUTF8(returnStr) + 1;
+        var buffer = _malloc(bufferSize);
+        stringToUTF8(returnStr, buffer, bufferSize);
+        return buffer;
+    },
     WXOnLaunchProgress: function() {
         var returnStr = window.WXWASMSDK.WXOnLaunchProgress();
         var bufferSize = lengthBytesUTF8(returnStr) + 1;
         var buffer = _malloc(bufferSize);
         stringToUTF8(returnStr, buffer, bufferSize);
         return buffer;
+    },
+    WXReportScene: function(conf, callbackId) {
+        window.WXWASMSDK.WXReportScene(_WXPointer_stringify_adaptor(conf), _WXPointer_stringify_adaptor(callbackId));
     },
     WXUncaughtException: function() {
        window.WXWASMSDK.WXUncaughtException(false);
@@ -929,6 +957,16 @@ mergeInto(LibraryManager.library, {
     },
     WXMkdirSync: function (dirPath, recursive) {
         var returnStr = window.WXWASMSDK.WXMkdirSync(_WXPointer_stringify_adaptor(dirPath),recursive);
+        var bufferSize = lengthBytesUTF8(returnStr) + 1;
+        var buffer = _malloc(bufferSize);
+        stringToUTF8(returnStr, buffer, bufferSize);
+        return buffer;
+    },
+    WXRmdir: function(dirPath, recursive, s, f, c) {
+        window.WXWASMSDK.WXRmdir(_WXPointer_stringify_adaptor(dirPath), recursive, _WXPointer_stringify_adaptor(s), _WXPointer_stringify_adaptor(f), _WXPointer_stringify_adaptor(c));
+    },
+    WXRmdirSync: function(dirPath, recursive) {
+        var returnStr = window.WXWASMSDK.WXRmdirSync(_WXPointer_stringify_adaptor(dirPath),recursive);
         var bufferSize = lengthBytesUTF8(returnStr) + 1;
         var buffer = _malloc(bufferSize);
         stringToUTF8(returnStr, buffer, bufferSize);

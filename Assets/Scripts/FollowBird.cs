@@ -3,18 +3,15 @@ using System.Collections;
 
 public class FollowBird : MonoBehaviour
 {
-
     private GameObject bird;
     private Transform birdTransform;
 
-    // Use this for initialization
     void Start()
     {
         bird = GameObject.FindGameObjectWithTag("Player");
         birdTransform = bird.transform;
     }
 
-    // Update is called once per frame
     void Update()
     {
         Vector3 birdPos = birdTransform.position;

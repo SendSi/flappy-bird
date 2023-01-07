@@ -22,6 +22,7 @@ import camera from './camera';
 import recorder from './recorder';
 import uploadFile from './upload-file';
 import gameRecorder from './game-recorder';
+import reportScene from './report-scene';
 
 const unityVersion = '2019.4.28f1';
 GameGlobal.unityNamespace = GameGlobal.unityNamespace || {};
@@ -104,6 +105,7 @@ const WXWASMSDK = {
   ...recorder,
   ...uploadFile,
   ...gameRecorder,
+  ...reportScene,
 };
 
 GameGlobal.WXWASMSDK = WXWASMSDK;

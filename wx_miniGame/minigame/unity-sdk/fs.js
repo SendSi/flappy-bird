@@ -199,6 +199,23 @@ export default {
       return e.message;
     }
   },
+  WXRmdir(dirPath, recursive, s, f, c) {
+    const fs = wx.getFileSystemManager();
+    fs.rmdir({
+      dirPath,
+      recursive: Boolean(recursive),
+      ...response.handleText(s, f, c),
+    });
+  },
+  WXRmdirSync(dirPath, recursive) {
+    try {
+      const fs = wx.getFileSystemManager();
+      fs.rmdirSync(dirPath, Boolean(recursive));
+      return 'rmdirSync:ok';
+    } catch (e) {
+      return e.message;
+    }
+  },
   WXStat(conf, callbackId) {
     conf = formatJsonStr(conf);
     wx.getFileSystemManager().stat({

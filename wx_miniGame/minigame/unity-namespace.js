@@ -9,7 +9,7 @@ const unityNamespace = {
   bundleHashLength: 32, // 自定义bundle中的hash长度
   releaseMemorySize: 31457280, // 单位Bytes, 1MB = 1024 KB = 1024*1024Bytes
   unityVersion: '2019.4.28f1',
-  convertPluginVersion: '202212281931',
+  convertPluginVersion: '202301051419',
   streamingUrlPrefixPath: '', // 拼在StreamingAssets前面的path，DATA_CDN + streamingUrlPrefixPath + StreamingAssets
   dataFileSubPrefix: '', // DATA_CDN + dataFileSubPrefix + datafilename
   maxStorage: 200, // 当前appid扩容后，通过本字段告知插件本地存储最大容量，单位MB

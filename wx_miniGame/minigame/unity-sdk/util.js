@@ -5,19 +5,9 @@ export default {
   WXReportGameStart() {
     GameGlobal.manager.reportCustomLaunchInfo();
   },
-  WXSetGameStage(stageType) {
-    if (GameGlobal.manager && GameGlobal.manager.setGameStage) {
-      GameGlobal.manager.setGameStage(stageType);
-    }
-  },
-  WXReportGameStageCostTime(ms, extInfo) {
-    if (GameGlobal.manager && GameGlobal.manager.reportGameStageCostTime) {
-      GameGlobal.manager.reportGameStageCostTime(ms, extInfo);
-    }
-  },
-  WXReportGameStageError(errorType, errStr, extInfo) {
-    if (GameGlobal.manager && GameGlobal.manager.reportGameStageError) {
-      GameGlobal.manager.reportGameStageError(errorType, errStr, extInfo);
+  WXReportGameSceneError(sceneId, errorType, errStr, extInfo) {
+    if (GameGlobal.manager && GameGlobal.manager.reportGameSceneError) {
+      GameGlobal.manager.reportGameSceneError(sceneId, errorType, errStr, extInfo);
     }
   },
   WXWriteLog(str) {
@@ -123,6 +113,16 @@ export default {
       return key;
     }
     return '';
+  },
+  WXGetCachePath(url) {
+    if (GameGlobal.manager && GameGlobal.manager.getCachePath) {
+      return GameGlobal.manager.getCachePath(url);
+    }
+  },
+  WXGetPluginCachePath() {
+    if (GameGlobal.manager && GameGlobal.manager.PLUGIN_CACHE_PATH) {
+      return GameGlobal.manager.PLUGIN_CACHE_PATH;
+    }
   },
   WXOnLaunchProgress() {
     if (GameGlobal.manager && GameGlobal.manager.onLaunchProgress) {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine.Events;
 
 public class EventCenter : BaseSingle<EventCenter>
@@ -42,6 +43,12 @@ public class EventCenter : BaseSingle<EventCenter>
             eventActionDic[name] = new EventOne<T>(action);
         }
     }
+
+    internal void Fire(object eN_gameOver)
+    {
+        throw new NotImplementedException();
+    }
+
     public void Fire<T>(string name, T obj)
     {
         if (eventActionDic.ContainsKey(name))
@@ -95,4 +102,6 @@ public class EventCenter : BaseSingle<EventCenter>
 public class EventName
 {
     public const string EN_updateScore = "EN_updateScore";
+    public const string EN_gameOver = "EN_gameOver";
+    public const string EN_getLife = "EN_getLife";
 }
