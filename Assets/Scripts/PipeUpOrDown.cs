@@ -6,11 +6,14 @@ public class PipeUpOrDown : MonoBehaviour
 
     void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.tag == "Player")
+        if (other.gameObject.tag == "Player" && GameMgr._intance.GameState == GameMgr.gameState_playing)
         {
-            hitMusic.Play();
-            dieMusic.Play();
-            GameManager._intance.GameState = GameManager.GAMESTATE_END;
+            if (hitMusic != null)
+            {
+                hitMusic.Play();
+                dieMusic.Play();
+            }
+            GameMgr._intance.GameState = GameMgr.gameState_end;
         }
     }
 

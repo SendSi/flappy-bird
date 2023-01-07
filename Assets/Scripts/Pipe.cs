@@ -23,7 +23,7 @@ public class Pipe : MonoBehaviour
         {
             // plus scroe
             aSource.Play();
-            GameManager._intance.score++;
+            GameMgr._intance.score++;
             EventCenter.GetInstance().Fire(EventName.EN_updateScore);
         }
     }

@@ -1,5 +1,5 @@
 {
-    "deviceOrientation": "portrait",
+    "deviceOrientation": "landscapeRight",
     "openDataContext": "open-data",
     "iOSHighPerformance": true,
     "subpackages": [

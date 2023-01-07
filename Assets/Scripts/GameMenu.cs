@@ -8,6 +8,7 @@ using System;
 
 public class GameMenu : MonoBehaviour
 {
+    public GameObject overPanel;
     public Text countNowTxt;//当前玩的结果
     public Text countHistoryTxt;//历史
     public Text curScoreTxt;//当前显示分数
@@ -16,24 +17,19 @@ public class GameMenu : MonoBehaviour
 
     public Button ShareButton;
 
-    //public Button ShowButton;
-    //public Button ReportButton;
-    //public RawImage RankBody;
-    //public GameObject RankMask;
-    //public GameObject RankingBox;
+    public Button RankBtn;
+    public RawImage RankBody;
+    public GameObject RankMask;
+    public GameObject RankingBox;
 
-    public void SetUIShow(bool isShow)
+    public void SetOverUIShow()
     {
-        countNowTxt.gameObject.SetActive(isShow);
-        countHistoryTxt.gameObject.SetActive(isShow);
-        gameOverImage.gameObject.SetActive(isShow);
-        startBtn.gameObject.SetActive(isShow);
-        ShareButton.gameObject.SetActive(isShow);
+        overPanel.SetActive(true);
     }
 
     void Awake()
     {
-        SetUIShow(false);
+        overPanel.SetActive(false);  
     }
 
 
@@ -44,7 +40,7 @@ public class GameMenu : MonoBehaviour
 
         startBtn.onClick.AddListener(() =>
         {
-            SceneManager.LoadScene(0);
+            SceneManager.LoadScene("Start");
         });
 
 
@@ -57,11 +53,11 @@ public class GameMenu : MonoBehaviour
       * 使用群排行功能需要特殊设置分享功能，详情可见链接
       * https://developers.weixin.qq.com/minigame/dev/guide/open-ability/share/share.html
       */
-        //WX.UpdateShareMenu(new UpdateShareMenuOption()
-        //{
-        //    withShareTicket = true,
-        //    isPrivateMessage = true,
-        //});
+        WX.UpdateShareMenu(new UpdateShareMenuOption()
+        {
+            withShareTicket = true,
+            isPrivateMessage = true,
+        });
 
         /**
          * 群排行榜功能需要配合 WX.OnShow 来使用，整体流程为：
@@ -71,69 +67,62 @@ public class GameMenu : MonoBehaviour
          * 4. 开放数据域调用 wx.getGroupCloudStorage 接口拉取获取群同玩成员的游戏数据
          * 5. 将群同玩成员数据绘制到 sharedCanvas
          */
-        //WX.OnShow((OnShowCallbackResult res) =>
-        //{
-        //    string shareTicket = res.shareTicket;
-        //    Dictionary<string, string> query = res.query;
+        WX.OnShow((OnShowCallbackResult res) =>
+        {
+            string shareTicket = res.shareTicket;
+            Dictionary<string, string> query = res.query;
 
-        //    if (!string.IsNullOrEmpty(shareTicket) && query != null && query["minigame_action"] == "show_group_list")
-        //    {
-        //        OpenDataMessage msgData = new OpenDataMessage();
-        //        msgData.type = "showGroupFriendsRank";
-        //        msgData.shareTicket = shareTicket;
+            if (!string.IsNullOrEmpty(shareTicket) && query != null && query["minigame_action"] == "show_group_list")
+            {
+                OpenDataMessage msgData = new OpenDataMessage();
+                msgData.type = "showGroupFriendsRank";
+                msgData.shareTicket = shareTicket;
 
-        //        string msg = JsonUtility.ToJson(msgData);
+                string msg = JsonUtility.ToJson(msgData);
 
-        //        ShowOpenData();
-        //        WX.GetOpenDataContext().PostMessage(msg);
-        //    }
-        //});
+                ShowOpenData();
+                WX.GetOpenDataContext().PostMessage(msg);
+            }
+        });
 
     }
 
     private void OnEventGameOver()
-    {
-        SetUIShow(true);
-        UpdateScore(GameManager._intance.score);
-        UploadPlayerScore(GameManager._intance.score);
+    {    
+        Invoke("SetOverUIShow", 1.5f);
+        UpdateScore(GameMgr._intance.score);
     }
 
     void UploadPlayerScore(int score)
     {
         OpenDataMessage msgData = new OpenDataMessage();
         msgData.type = "setUserRecord";
-        msgData.score =score;
-
+        msgData.score = score;
         string msg = JsonUtility.ToJson(msgData);
-        Debug.LogError(msg);
         WX.GetOpenDataContext().PostMessage(msg);
     }
 
     void Init()
     {
-
-        //ShowButton.onClick.AddListener(() =>
-        //{
-        //    ShowOpenData();
-
-        //    OpenDataMessage msgData = new OpenDataMessage();
-        //    msgData.type = "showFriendsRank";
-
-        //    string msg = JsonUtility.ToJson(msgData);
-        //    WX.GetOpenDataContext().PostMessage(msg);
-        //});
+        RankBtn.onClick.AddListener(() =>
+        {
+            ShowOpenData();
+            OpenDataMessage msgData = new OpenDataMessage();
+            msgData.type = "showFriendsRank";
+            string msg = JsonUtility.ToJson(msgData);
+            WX.GetOpenDataContext().PostMessage(msg);
+        });
 
 
-        //RankMask.GetComponent<Button>().onClick.AddListener(() =>
-        //{
-        //    RankMask.SetActive(false);
-        //    RankingBox.SetActive(false);
-        //    WX.HideOpenData();
-        //});
+        RankMask.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            RankMask.SetActive(false);
+            RankingBox.SetActive(false);
+            WX.HideOpenData();
+        });
 
         ShareButton.onClick.AddListener(() =>
         {
-            Debug.LogError("分享");
             WX.ShareAppMessage(new ShareAppMessageOption()
             {
                 title = "最强管道王者！谁是第一？",
@@ -143,27 +132,25 @@ public class GameMenu : MonoBehaviour
         });
     }
 
-
-
-
     private void OnEventScoreRefresh()
     {
-        curScoreTxt.text = "当前:" + GameManager._intance.score.ToString();//接受值
+        curScoreTxt.text = "当前:" + GameMgr._intance.score.ToString();//当前值
     }
 
-    public void UpdateScore(float nowScore)
+    public void UpdateScore(int nowScore)
     {
-        float highScore = PlayerPrefs.GetFloat("score", 0);
+        countNowTxt.text = "当前:" + nowScore.ToString();
+        int prefsScore = PlayerPrefs.GetInt("score1", 0);
 
-        if (nowScore > highScore)
+        var maxScore = Mathf.Max(nowScore, prefsScore);
+        countHistoryTxt.text = "历史最高:" + maxScore.ToString();
+
+        if (nowScore >= maxScore)
         {
-            highScore = nowScore;
+            Debug.LogError("上传最高分哦:" + maxScore.ToString());
+            PlayerPrefs.SetInt("score1", maxScore);
+            UploadPlayerScore(maxScore);
         }
-
-        PlayerPrefs.SetFloat("score", highScore);
-
-        this.countNowTxt.text = "当前:" + nowScore.ToString();
-        this.countHistoryTxt.text = "历史最高:" + highScore.ToString();
     }
 
     private void OnDestroy()
@@ -173,40 +160,40 @@ public class GameMenu : MonoBehaviour
     }
 
 
-    //void ShowOpenData()
-    //{
-    //    RankMask.SetActive(true);
-    //    RankingBox.SetActive(true);
-    //    // 
-    //    // 注意这里传x,y,width,height是为了点击区域能正确点击，x,y 是距离屏幕左上角的距离，宽度传 (int)RankBody.rectTransform.rect.width是在canvas的UI Scale Mode为 Constant Pixel Size的情况下设置的。
-    //    /**
-    //     * 如果父元素占满整个窗口的话，pivot 设置为（0，0），rotation设置为180，则左上角就是离屏幕的距离
-    //     * 注意这里传x,y,width,height是为了点击区域能正确点击，因为开放数据域并不是使用 Unity 进行渲染而是可以选择任意第三方渲染引擎
-    //     * 所以开放数据域名要正确处理好事件处理，就需要明确告诉开放数据域，排行榜所在的纹理绘制在屏幕中的物理坐标系
-    //     * 比如 iPhone Xs Max 的物理尺寸是 414 * 896，如果排行榜被绘制在屏幕中央且物理尺寸为 200 * 200，那么这里的 x,y,width,height应当是 107,348,200,200
-    //     * x,y 是距离屏幕左上角的距离，宽度传 (int)RankBody.rectTransform.rect.width是在canvas的UI Scale Mode为 Constant Pixel Size的情况下设置的
-    //     * 如果是Scale With Screen Size，且设置为以宽度作为缩放，则要这要做一下换算，比如canavs宽度为960，rawImage设置为200 则需要根据 referenceResolution 做一些换算
-    //     * 不过不管是什么屏幕适配模式，这里的目的就是为了算出 RawImage 在屏幕中绝对的位置和尺寸
-    //     */
+    void ShowOpenData()
+    {
+        RankMask.SetActive(true);
+        RankingBox.SetActive(true);
+        // 
+        // 注意这里传x,y,width,height是为了点击区域能正确点击，x,y 是距离屏幕左上角的距离，宽度传 (int)RankBody.rectTransform.rect.width是在canvas的UI Scale Mode为 Constant Pixel Size的情况下设置的。
+        /**
+         * 如果父元素占满整个窗口的话，pivot 设置为（0，0），rotation设置为180，则左上角就是离屏幕的距离
+         * 注意这里传x,y,width,height是为了点击区域能正确点击，因为开放数据域并不是使用 Unity 进行渲染而是可以选择任意第三方渲染引擎
+         * 所以开放数据域名要正确处理好事件处理，就需要明确告诉开放数据域，排行榜所在的纹理绘制在屏幕中的物理坐标系
+         * 比如 iPhone Xs Max 的物理尺寸是 414 * 896，如果排行榜被绘制在屏幕中央且物理尺寸为 200 * 200，那么这里的 x,y,width,height应当是 107,348,200,200
+         * x,y 是距离屏幕左上角的距离，宽度传 (int)RankBody.rectTransform.rect.width是在canvas的UI Scale Mode为 Constant Pixel Size的情况下设置的
+         * 如果是Scale With Screen Size，且设置为以宽度作为缩放，则要这要做一下换算，比如canavs宽度为960，rawImage设置为200 则需要根据 referenceResolution 做一些换算
+         * 不过不管是什么屏幕适配模式，这里的目的就是为了算出 RawImage 在屏幕中绝对的位置和尺寸
+         */
 
-    //    CanvasScaler scaler = gameObject.GetComponent<CanvasScaler>();
-    //    var referenceResolution = scaler.referenceResolution;
-    //    var p = RankBody.transform.position;
+        CanvasScaler scaler = gameObject.GetComponent<CanvasScaler>();
+        var referenceResolution = scaler.referenceResolution;
+        var p = RankBody.transform.position;
 
-    //    WX.ShowOpenData(RankBody.texture, (int)p.x, Screen.height - (int)p.y, (int)((Screen.width / referenceResolution.x) * RankBody.rectTransform.rect.width), (int)((Screen.width / referenceResolution.x) * RankBody.rectTransform.rect.height));
-    //}
+        WX.ShowOpenData(RankBody.texture, (int)p.x, Screen.height - (int)p.y, (int)((Screen.width / referenceResolution.x) * RankBody.rectTransform.rect.width), (int)((Screen.width / referenceResolution.x) * RankBody.rectTransform.rect.height));
+    }
 
 
 }
 
 
-//[System.Serializable]
-//public class OpenDataMessage
-//{
-//    // type 用于表明时间类型
-//    public string type;
+[System.Serializable]
+public class OpenDataMessage
+{
+    // type 用于表明时间类型
+    public string type;
 
-//    public string shareTicket;
+    public string shareTicket;
 
-//    public int score;
-//}
+    public int score;
+}

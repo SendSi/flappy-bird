@@ -21,7 +21,7 @@ public class Bird : MonoBehaviour
 
     void Update()
     {
-        if (GameManager._intance.GameState == GameManager.GAMESTATE_PLAYING)
+        if (GameMgr._intance.GameState == GameMgr.gameState_playing)
         {
             timer += Time.deltaTime;
             if (timer >= 1.0f / frameNumber)
@@ -33,9 +33,9 @@ public class Bird : MonoBehaviour
             }
         }
 
-        if (GameManager._intance.GameState == GameManager.GAMESTATE_PLAYING)
-        {         
-            if (Input.GetMouseButton(0))
+        if (GameMgr._intance.GameState == GameMgr.gameState_playing)
+        {
+            if (Input.GetMouseButtonDown(0))
             {
                 mBridAudio.Play();
                 Vector3 vel2 = mBridBody.velocity;

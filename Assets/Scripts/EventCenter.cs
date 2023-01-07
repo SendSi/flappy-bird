@@ -89,7 +89,6 @@ public class EventCenter : BaseSingle<EventCenter>
             (eventActionDic[name] as EventTwo<T1, T2>).actions?.Invoke(t1, t2);
         }
     }
-
     public void Clear()
     {
         eventActionDic.Clear();

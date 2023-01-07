@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class FollowBird : MonoBehaviour
 {
@@ -14,16 +13,19 @@ public class FollowBird : MonoBehaviour
 
     void Update()
     {
-        Vector3 birdPos = birdTransform.position;
-        float y = birdPos.y - 3.5088f;
-        if (y > 2.4f)
+        if (GameMgr._intance.GameState == GameMgr.gameState_playing)
         {
-            y = 2.4f;
+            Vector3 birdPos = birdTransform.position;
+            float y = birdPos.y - 3.5088f;
+            if (y > 2.4f)
+            {
+                y = 2.4f;
+            }
+            if (y < -2.4f)
+            {
+                y = -2.4f;
+            }
+            this.transform.position = new Vector3(birdPos.x + 3.63223f, y, -10);
         }
-        if (y < -2.4f)
-        {
-            y = -2.4f;
-        }
-        this.transform.position = new Vector3(birdPos.x + 3.63223f, y, -10);
     }
 }
