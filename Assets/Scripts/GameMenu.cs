@@ -35,7 +35,7 @@ public class GameMenu : MonoBehaviour
 
     private void Start()
     {
-        EventCenter.GetInstance().Bind(EventName.EN_updateScore, OnEventScoreRefresh);
+        EventCenter.GetInstance().Bind<int>(EventName.EN_updateScore, OnEventScoreRefresh);
         EventCenter.GetInstance().Bind(EventName.EN_gameOver, OnEventGameOver);
 
         startBtn.onClick.AddListener(() =>
@@ -132,9 +132,9 @@ public class GameMenu : MonoBehaviour
         });
     }
 
-    private void OnEventScoreRefresh()
+    private void OnEventScoreRefresh(int value)
     {
-        curScoreTxt.text = "当前:" + GameMgr._intance.score.ToString();//当前值
+        curScoreTxt.text = "当前:" + value.ToString();//当前值
     }
 
     public void UpdateScore(int nowScore)
@@ -155,7 +155,7 @@ public class GameMenu : MonoBehaviour
 
     private void OnDestroy()
     {
-        EventCenter.GetInstance().UnBind(EventName.EN_updateScore, OnEventScoreRefresh);
+        EventCenter.GetInstance().UnBind<int>(EventName.EN_updateScore, OnEventScoreRefresh);
         EventCenter.GetInstance().UnBind(EventName.EN_gameOver, OnEventGameOver);
     }
 

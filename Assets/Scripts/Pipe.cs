@@ -24,7 +24,7 @@ public class Pipe : MonoBehaviour
             // plus scroe
             aSource.Play();
             GameMgr._intance.score++;
-            EventCenter.GetInstance().Fire(EventName.EN_updateScore);
+            EventCenter.GetInstance().Fire(EventName.EN_updateScore, GameMgr._intance.score);      
         }
     }
 
