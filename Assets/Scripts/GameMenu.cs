@@ -179,8 +179,11 @@ public class GameMenu : MonoBehaviour
         CanvasScaler scaler = gameObject.GetComponent<CanvasScaler>();
         var referenceResolution = scaler.referenceResolution;
         var p = RankBody.transform.position;
-
-        WX.ShowOpenData(RankBody.texture, (int)p.x, Screen.height - (int)p.y, (int)((Screen.width / referenceResolution.x) * RankBody.rectTransform.rect.width), (int)((Screen.width / referenceResolution.x) * RankBody.rectTransform.rect.height));
+        //Debug.Log(p.x+"   "+(Screen.height - (int)p.y)+"   "+((int)((Screen.width / referenceResolution.x) * RankBody.rectTransform.rect.width))+"   "+ ((int)((Screen.width / referenceResolution.x) * RankBody.rectTransform.rect.height)));
+        WX.ShowOpenData(RankBody.texture, (int)p.x, 
+            Screen.height - (int)p.y,
+            (int)((Screen.width / referenceResolution.x) * RankBody.rectTransform.rect.width),
+            (int)((Screen.width / referenceResolution.x) * RankBody.rectTransform.rect.height));
     }
 
 
